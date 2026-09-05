@@ -1,4 +1,7 @@
-const API_BASE_URL = 'http://localhost:8080/api';
+//const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL ||
+    'http://localhost:8080/api';
 
 export const getHealth = async () => {
     const response = await fetch(`${API_BASE_URL}/health`);
@@ -64,6 +67,16 @@ export const sendAIMessage = async (messages) => {
     return response.json();
 };
 
+export const getAIProvider = async () => {
+    const response = await fetch(`${API_BASE_URL}/ai/provider`);
+
+    if (!response.ok) {
+        throw new Error("Failed to get AI provider");
+    }
+
+    return response.json();
+};
+
 export const streamAIMessage = async (messages, onChunk) => {
 
     const response = await fetch(
@@ -88,10 +101,56 @@ export const streamAIMessage = async (messages, onChunk) => {
     }
 
     const reader = response.body.getReader();
-
     const decoder = new TextDecoder("utf-8");
 
     let buffer = "";
+
+    const processEvent = (event) => {
+
+        const lines = event.split("\n");
+        const dataLines = [];
+
+        for (const line of lines) {
+
+            if (line.startsWith("data:")) {
+
+                let data = line.substring(5);
+
+                // Remove only the optional SSE separator space.
+                if (data.startsWith(" ")) {
+                    data = data.substring(1);
+                }
+
+                dataLines.push(data);
+            }
+        }
+
+        if (dataLines.length === 0) {
+            return;
+        }
+
+        const data = dataLines.join("\n");
+
+        if (!data.trim()) {
+            return;
+        }
+
+        try {
+
+            const payload = JSON.parse(data);
+
+            if (payload.content !== undefined) {
+                onChunk(payload.content);
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Invalid SSE JSON:",
+                data
+            );
+        }
+    };
 
     while (true) {
 
@@ -102,7 +161,7 @@ export const streamAIMessage = async (messages, onChunk) => {
         }
 
         buffer += decoder.decode(value, {
-            stream: true
+            stream: true,
         });
 
         const events = buffer.split("\n\n");
@@ -110,20 +169,12 @@ export const streamAIMessage = async (messages, onChunk) => {
         buffer = events.pop() || "";
 
         for (const event of events) {
-
-            const lines = event.split("\n");
-
-            for (const line of lines) {
-
-                if (line.startsWith("data:")) {
-
-                    const chunk = line.substring(5);
-
-                    if (chunk.length > 0) {
-                        onChunk(chunk);
-                    }
-                }
-            }
+            processEvent(event);
         }
+    }
+
+    // Process any remaining event
+    if (buffer.trim()) {
+        processEvent(buffer);
     }
 };

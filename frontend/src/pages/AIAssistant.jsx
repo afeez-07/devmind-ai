@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { streamAIMessage } from "../services/api";
+import { streamAIMessage, getAIProvider, } from "../services/api";
 
 export default function AIAssistant() {
 
@@ -8,6 +8,67 @@ export default function AIAssistant() {
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [provider, setProvider] = useState("");
+
+    useEffect(() => {
+        const loadProvider = async () => {
+            try {
+                const data = await getAIProvider();
+                setProvider(data.provider);
+            } catch (err) {
+                console.error("Failed to load AI provider:", err);
+                setProvider("unknown");
+            }
+        };
+
+        loadProvider();
+    }, []);
+
+    const developerTools = {
+        explain: `Explain the following code clearly.
+
+    Break down what the code does, explain the important parts, and mention any potential improvements.
+
+    Code:
+
+    `,
+
+        debug: `Debug the following code.
+
+    Identify the problem, explain why it happens, and provide the corrected code.
+
+    Code:
+
+    `,
+
+        generate: `Generate clean, production-ready code for the following requirement.
+
+    Explain the approach briefly and then provide the complete code.
+
+    Requirement:
+
+    `,
+
+        optimize: `Analyze the following code for performance, readability, and maintainability.
+
+    Suggest improvements and provide an optimized version of the code.
+
+    Code:
+
+    `,
+
+        tests: `Write comprehensive unit tests for the following code.
+
+    Include important edge cases and explain what each test verifies.
+
+    Code:
+
+    `,
+    };
+
+    const handleDeveloperTool = (tool) => {
+        setInput(developerTools[tool]);
+    };
 
     const handleSubmit = async (e) => {
 
@@ -39,6 +100,7 @@ export default function AIAssistant() {
             const assistantMessage = {
                 role: "assistant",
                 content: "",
+                streaming: true,
             };
 
             setMessages([
@@ -67,6 +129,19 @@ export default function AIAssistant() {
                     });
                 }
             );
+
+            setMessages((currentMessages) => {
+                const updated = [...currentMessages];
+
+                const lastMessageIndex = updated.length - 1;
+
+                updated[lastMessageIndex] = {
+                    ...updated[lastMessageIndex],
+                    streaming: false,
+                };
+
+                return updated;
+            });
 
         } catch (err) {
 
@@ -103,7 +178,11 @@ export default function AIAssistant() {
 
                 <div className="ai-status">
                     <span className="status-dot"></span>
-                    Local AI • Ollama
+                    {provider === "gemini"
+                        ? "Gemini AI"
+                        : provider === "ollama"
+                            ? "Local AI • Ollama"
+                            : "AI Provider"}
                 </div>
 
                 {/* Chat Messages */}
@@ -138,9 +217,17 @@ export default function AIAssistant() {
 
                             <div className="chat-message-content">
                                 {message.role === "assistant" ? (
-                                    <ReactMarkdown>
-                                        {message.content}
-                                    </ReactMarkdown>
+                                    message.streaming ? (
+                                        <div className="streaming-content">
+                                            {message.content}
+                                        </div>
+                                    ) : (
+                                        <div className="markdown-content">
+                                            <ReactMarkdown>
+                                                {message.content}
+                                            </ReactMarkdown>
+                                        </div>
+                                    )
                                 ) : (
                                     message.content
                                 )}
@@ -169,6 +256,50 @@ export default function AIAssistant() {
                 {/* Input */}
 
                 <form onSubmit={handleSubmit} className="ai-chat-form">
+
+                    <div className="ai-developer-tools">
+
+                        <button
+                            type="button"
+                            onClick={() => handleDeveloperTool("explain")}
+                            disabled={loading}
+                        >
+                            🧠 Explain Code
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => handleDeveloperTool("debug")}
+                            disabled={loading}
+                        >
+                            🐞 Debug Code
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => handleDeveloperTool("generate")}
+                            disabled={loading}
+                        >
+                            ⚡ Generate Code
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => handleDeveloperTool("optimize")}
+                            disabled={loading}
+                        >
+                            🚀 Optimize Code
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => handleDeveloperTool("tests")}
+                            disabled={loading}
+                        >
+                            🧪 Write Tests
+                        </button>
+
+                    </div>
 
                     <textarea
                         value={input}

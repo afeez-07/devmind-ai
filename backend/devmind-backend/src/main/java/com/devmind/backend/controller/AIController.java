@@ -1,5 +1,6 @@
 package com.devmind.backend.controller;
 
+import java.util.Map;
 import com.devmind.backend.dto.AIRequest;
 import com.devmind.backend.dto.AIResponse;
 import com.devmind.backend.service.AIService;
@@ -31,6 +32,17 @@ public class AIController {
         AIResponse response = aiService.chat(request);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/provider")
+    public ResponseEntity<Map<String, String>> getProvider() {
+
+        return ResponseEntity.ok(
+                Map.of(
+                        "provider",
+                        aiService.getProviderName()
+                )
+        );
     }
 
     @PostMapping(
