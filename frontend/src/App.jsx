@@ -20,7 +20,8 @@ function App() {
   const [description, setDescription] = useState("");
   const [language, setLanguage] = useState("");
 
-  const [message, setMessage] = useState("");
+  const [userMessage, setUserMessage] = useState("");
+  const [projectMessage, setProjectMessage] = useState("");
 
   // Check backend
   useEffect(() => {
@@ -73,11 +74,11 @@ function App() {
 
       setUsername("");
       setEmail("");
-      setMessage("User created successfully 🚀");
+      setUserMessage("User created successfully 🚀");
 
       fetchUsers();
     } catch (error) {
-      setMessage("Failed to create user ❌");
+      setUserMessage("Failed to create user ❌");
       console.error(error);
     }
   };
@@ -106,11 +107,11 @@ function App() {
       setProjectName("");
       setDescription("");
       setLanguage("");
-      setMessage("Project created successfully 🚀");
+      setProjectMessage("Project created successfully 🚀");
 
       fetchProjects();
     } catch (error) {
-      setMessage("Failed to create project ❌");
+      setProjectMessage("Failed to create project ❌");
       console.error(error);
     }
   };
@@ -261,7 +262,17 @@ function App() {
 
               </form>
 
-              {message && <p className="message">{message}</p>}
+              {userMessage && (
+                <p
+                  className={`message ${
+                    userMessage.includes("successfully")
+                      ? "message-success"
+                      : "message-error"
+                  }`}
+                >
+                  {userMessage}
+                </p>
+              )}
             </div>
 
             <div className="section-card">
@@ -325,7 +336,17 @@ function App() {
 
               </form>
 
-              {message && <p className="message">{message}</p>}
+              {projectMessage && (
+                <p
+                  className={`message ${
+                    projectMessage.includes("successfully")
+                      ? "message-success"
+                      : "message-error"
+                  }`}
+                >
+                  {projectMessage}
+                </p>
+              )}
             </div>
 
             <div className="section-card">

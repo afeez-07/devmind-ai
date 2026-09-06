@@ -208,8 +208,26 @@ nav button.active {
 }
 
 .message {
-  color: #7dd3a7;
-  margin-bottom: 0;
+  margin: 18px auto 0;
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.message-success {
+  color: #86efac;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.message-error {
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.25);
 }
 
 /* Users */
