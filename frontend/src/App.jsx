@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import AIAssistant from "./pages/AIAssistant";
 
-const API_URL = "http://localhost:8080/api";
+const API_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  "http://localhost:8080/api";
 
 function App() {
   const [activePage, setActivePage] = useState("dashboard");
