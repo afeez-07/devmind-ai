@@ -183,7 +183,7 @@ function App() {
 
             <div className="welcome">
               <h1>Welcome to DevMind AI 👋</h1>
-              <p>
+              <p className="welcome-subtitle">
                 Your AI-powered software development workspace.
               </p>
             </div>

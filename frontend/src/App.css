@@ -119,14 +119,18 @@ nav button.active {
 
 .welcome {
   margin-bottom: 30px;
+  text-align: center;
 }
 
 .welcome h1 {
-  margin-bottom: 8px;
+  margin: 0;
+  line-height: 1.2;
 }
 
 .welcome p {
+  margin: 12px 0 0;
   color: #929bad;
+  line-height: 1.5;
 }
 
 /* Stats */
@@ -453,6 +457,7 @@ nav button.active {
     box-sizing: border-box;
     width: 100%;
     min-width: 0;
+    scroll-behavior: smooth;
 }
 
 .chat-empty {
@@ -816,6 +821,25 @@ nav button.active {
     word-break: break-word;
     line-height: 1.7;
     font-family: inherit;
+}
+
+.streaming-content::after {
+    content: "▋";
+    display: inline-block;
+    margin-left: 4px;
+    animation: streaming-cursor 0.8s infinite;
+}
+
+@keyframes streaming-cursor {
+    0%,
+    50% {
+        opacity: 1;
+    }
+
+    51%,
+    100% {
+        opacity: 0;
+    }
 }
 
 .ai-developer-tools {

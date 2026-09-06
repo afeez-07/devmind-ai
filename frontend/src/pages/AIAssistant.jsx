@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { streamAIMessage, getAIProvider, } from "../services/api";
 
@@ -9,6 +9,7 @@ export default function AIAssistant() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [provider, setProvider] = useState("");
+    const messagesEndRef = useRef(null);
 
     useEffect(() => {
         const loadProvider = async () => {
@@ -23,6 +24,13 @@ export default function AIAssistant() {
 
         loadProvider();
     }, []);
+
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "end",
+        });
+    }, [messages, loading]);
 
     const developerTools = {
         explain: `Explain the following code clearly.
@@ -178,11 +186,12 @@ export default function AIAssistant() {
 
                 <div className="ai-status">
                     <span className="status-dot"></span>
-                    {provider === "gemini"
-                        ? "Gemini AI"
-                        : provider === "ollama"
-                            ? "Local AI • Ollama"
-                            : "AI Provider"}
+                    {
+                        provider === "gemini" ? "Gemini AI • Groq Fallback"
+                        : provider === "ollama" ? "Local AI • Ollama"
+                        : provider === "groq" ? "Groq AI"
+                        : "AI Provider"
+                    }
                 </div>
 
                 {/* Chat Messages */}
@@ -219,7 +228,7 @@ export default function AIAssistant() {
                                 {message.role === "assistant" ? (
                                     message.streaming ? (
                                         <div className="streaming-content">
-                                            {message.content}
+                                            {message.content || "Thinking..."}
                                         </div>
                                     ) : (
                                         <div className="markdown-content">
@@ -237,19 +246,7 @@ export default function AIAssistant() {
 
                     ))}
 
-                    {loading && (
-                        <div className="chat-message assistant">
-
-                            <div className="chat-message-label">
-                                🤖 DevMind AI
-                            </div>
-
-                            <div className="chat-message-content">
-                                Thinking...
-                            </div>
-
-                        </div>
-                    )}
+                    <div ref={messagesEndRef} />
 
                 </div>
 
