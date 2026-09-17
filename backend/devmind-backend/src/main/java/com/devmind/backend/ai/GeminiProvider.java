@@ -6,6 +6,7 @@ import com.google.genai.ResponseStream;
 import com.google.genai.types.Content;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Part;
+import com.google.genai.types.HttpOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -31,6 +32,11 @@ public class GeminiProvider implements AIProvider {
     ) {
         this.client = Client.builder()
                 .apiKey(apiKey)
+                .httpOptions(
+                        HttpOptions.builder()
+                                .timeout(30000)
+                                .build()
+                )
                 .build();
     }
 
