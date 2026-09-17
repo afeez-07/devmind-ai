@@ -14,8 +14,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
 
+        String[] allowedOrigins = frontendUrl.split(",");
+
         registry.addMapping("/api/**")
-                .allowedOrigins(frontendUrl)
+                .allowedOrigins(allowedOrigins)
                 .allowedMethods(
                         "GET",
                         "POST",

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { streamAIMessage, getAIProvider, } from "../services/api";
 
 export default function AIAssistant() {
@@ -232,7 +233,7 @@ export default function AIAssistant() {
                                         </div>
                                     ) : (
                                         <div className="markdown-content">
-                                            <ReactMarkdown>
+                                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                                 {message.content}
                                             </ReactMarkdown>
                                         </div>
