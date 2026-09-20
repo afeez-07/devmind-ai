@@ -38,19 +38,29 @@ The application is deployed with a React + Vite frontend on Vercel and a Spring 
 
 ## 🎥 Screenshots & Demo
 
-### Application Dashboard
+### 📊 Application Dashboard
 
-![DevMind AI Dashboard](screenshots/dashboard.png)
+![DevMind AI Dashboard](screenshots/dev-ai-dashboard.png)
 
-### AI Assistant
+The dashboard provides an overview of the DevMind AI workspace and the main application features.
 
-![DevMind AI Assistant](screenshots/ai-assistant.png)
+### 👥 User Management
 
-### Project Management
+![DevMind AI Users](screenshots/dev-ai-users.png)
 
-![DevMind AI Projects](screenshots/projects.png)
+The user management interface allows users and application data to be managed through the DevMind AI workspace.
 
-> Screenshots demonstrate the main application interface, project management workflow, and AI-assisted development experience.
+### 📁 Project Management
+
+![DevMind AI Projects](screenshots/dev-ai-projects.png)
+
+The project management interface allows users to create and manage software development projects.
+
+### 🤖 AI Assistant
+
+![DevMind AI Assistant](screenshots/dev-ai-assistant.png)
+
+The AI Assistant provides interactive programming assistance for code understanding, generation, debugging, optimization, and improvement.
 
 ---
 
